@@ -1,0 +1,91 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+// Define structure for a song
+struct Song {
+    char title[100];
+    char artist[100];
+    struct Song *next;
+};
+// Function to add a song to the playlist
+void addSong(struct Song **head) {
+    struct Song *newSong = (struct Song*)malloc(sizeof(struct Song));
+    if(newSong == NULL) {
+        printf("Memory allocation failed.\n");
+        return;
+    }
+    printf("Enter song title: ");
+    scanf(" %[^\n]s", newSong->title);
+    printf("Enter artist name: ");
+    scanf(" %[^\n]s", newSong->artist);
+    newSong->next = *head;
+    *head = newSong;
+    printf("Song added successfully.\n");
+}
+// Function to remove a song from the playlist
+void removeSong(struct Song **head, char* title) {
+    struct Song *current = *head;
+    struct Song *temp = NULL;
+
+    while (current != NULL && strcmp(current->title, title) != 0) {
+        temp = current;
+        current = current->next;
+    }
+    if (current == NULL) {
+        printf("Song not found.\n");
+        return;
+    }
+    if (temp == NULL) {
+        *head = current->next;
+    } else {
+        temp->next = current->next;
+    }
+    free(current);
+    printf("Song removed successfully.\n");
+}
+// Function to display all songs in the playlist
+void displayPlaylist(struct Song *head) {
+    if (head == NULL) {
+        printf("Playlist is empty.\n");
+        return;
+    }
+    printf("Playlist:\n");
+    while (head != NULL) {
+        printf("Title: %s, Artist: %s\n", head->title, head->artist);
+        head = head->next;
+    }
+}
+// Main function
+int main() {
+    struct Song *playlist = NULL;
+    int choice;
+    char title[100];
+    do {
+        printf("\nMenu:\n");
+        printf("1. Add song\n");
+        printf("2. Remove song\n");
+        printf("3. Display playlist\n");
+        printf("4. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+        switch(choice) {
+            case 1:
+                addSong(&playlist);
+                break;
+            case 2:
+                printf("Enter the title of the song to remove: ");
+                scanf(" %[^\n]s", title);
+                removeSong(&playlist, title);
+                break;
+            case 3:
+                displayPlaylist(playlist);
+                break;
+            case 4:
+                printf("Exiting...\n");
+                break;
+            default:
+                printf("Invalid choice. Please try again.\n");
+        }
+    } while(choice != 4);
+    return 0;
+}
